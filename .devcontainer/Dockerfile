@@ -1,9 +1,6 @@
 FROM mcr.microsoft.com/vscode/devcontainers/base:ubuntu-18.04
 
-ENV DEBIAN_FRONTEND=noninteractive \
-    RUSTUP_HOME=/usr/local/rustup \
-    CARGO_HOME=/usr/local/cargo \
-    PATH=/usr/local/cargo/bin:$PATH
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt update \
   #
@@ -45,7 +42,6 @@ RUN apt update \
     #
     # Install Azure IoT device SDK for C library with header files
     azure-iot-sdk-c-dev \
-  && curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path \
   #&& su --login vscode --shell /bin/bash -c " \
   #  mkdir -p ~/{workspace,.zfunc,.local/{bin,share/bash-completion/completions}} \
   #  && rustup completions bash > ~/.local/share/bash-completion/completions/rustup \
@@ -62,8 +58,10 @@ RUN apt update \
   && apt -y clean \
   && rm -rf /var/lib/apt/lists/*
 
-# Set default user to be vscode
 USER vscode
 
+RUN curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
+
 # Switch back to dialog for any ad-hoc use of apt
-ENV DEBIAN_FRONTEND=dialog
+ENV DEBIAN_FRONTEND=dialog \
+    PATH=/home/vscode/.cargo/bin:$PATH
