@@ -1,6 +1,9 @@
 FROM mcr.microsoft.com/vscode/devcontainers/base:ubuntu-18.04
 
-ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND=noninteractive \
+    RUSTUP_HOME=/usr/local/rustup \
+    CARGO_HOME=/usr/local/cargo \
+    PATH=/usr/local/cargo/bin:$PATH
 
 RUN apt update \
   #
@@ -14,15 +17,15 @@ RUN apt update \
   #
   # Add Microsoft's Azure CLI repository
   && curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null \
-  && echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/azure-cli.list \
+  && echo "deb [arch=$(dpkg --print-architecture)] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/azure-cli.list \
   #
   # Add Docker's repository
   && curl -sL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor | tee /etc/apt/trusted.gpg.d/docker.asc.gpg > /dev/null \
-  && echo "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list \
+  && echo "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list \
   #
   # Add Azure IoT SDK
   && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys AF1A6BA067E3641215DF0ECBFDA6A393E4C2257F \
-  && echo "deb [arch=amd64] http://ppa.launchpad.net/aziotsdklinux/ppa-azureiot/ubuntu $(lsb_release -cs) main" > /etc/apt/sources.list.d/azure-iot.list \
+  && echo "deb [arch=$(dpkg --print-architecture)] http://ppa.launchpad.net/aziotsdklinux/ppa-azureiot/ubuntu $(lsb_release -cs) main" > /etc/apt/sources.list.d/azure-iot.list \
   #
   # Pull in newly added repositories
   && apt update \
@@ -42,14 +45,11 @@ RUN apt update \
     #
     # Install Azure IoT device SDK for C library with header files
     azure-iot-sdk-c-dev \
-  && su --login vscode --shell /bin/bash -c " \
-    curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path \
-    && echo 'PATH=\"$HOME/.cargo/bin:$PATH\"' >> ~/.profile \
-    && echo 'PATH=\"$HOME/.cargo/bin:$PATH\"' >> ~/.zprofile" \
-  && su --login vscode --shell /bin/bash -c " \
-    mkdir -p ~/{workspace,.zfunc,.local/{bin,share/bash-completion/completions}}" \
-    #&& rustup completions bash > ~/.local/share/bash-completion/completions/rustup \
-    #&& rustup completions zsh > ~/.zfunc/_rustup" \
+  && curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path \
+  #&& su --login vscode --shell /bin/bash -c " \
+  #  mkdir -p ~/{workspace,.zfunc,.local/{bin,share/bash-completion/completions}} \
+  #  && rustup completions bash > ~/.local/share/bash-completion/completions/rustup \
+  #  && rustup completions zsh > ~/.zfunc/_rustup" \
   #
   # Add non-root user to the docker group
   && groupadd docker \
