@@ -31,6 +31,10 @@ RUN apt update \
     # Install C toolchain
     build-essential \
     #
+    # Required by openssl-sys
+    pkg-config \
+    libssl-dev \
+    #
     # For debugging network related issues
     dnsutils \
     #
@@ -43,9 +47,6 @@ RUN apt update \
     # Install Azure IoT device SDK for C library with header files
     azure-iot-sdk-c-dev \
   #&& su --login vscode --shell /bin/bash -c " \
-  #  mkdir -p ~/{workspace,.zfunc,.local/{bin,share/bash-completion/completions}} \
-  #  && rustup completions bash > ~/.local/share/bash-completion/completions/rustup \
-  #  && rustup completions zsh > ~/.zfunc/_rustup" \
   #
   # Add non-root user to the docker group
   && groupadd docker \

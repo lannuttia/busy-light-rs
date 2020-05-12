@@ -34,7 +34,6 @@ fn main() {
     .arg(clap::Arg::with_name("provisioning-host")
         .env("BUSY_LIGHT_PROVISIONING_HOST")
         .long("provisioning-host")
-        .required(true)
         .takes_value(true)
         .default_value("global.azure-devices-provisioning.net")
         .help("The provisioning host used by Azure"))
