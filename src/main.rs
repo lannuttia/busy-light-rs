@@ -57,7 +57,7 @@ fn main() {
         0 => simplelog::LevelFilter::Warn,
         1 => simplelog::LevelFilter::Info,
         2 => simplelog::LevelFilter::Debug,
-        3 | _ => simplelog::LevelFilter::Trace,
+        _ => simplelog::LevelFilter::Trace,
     };
 
     simplelog::CombinedLogger::init(vec![simplelog::TermLogger::new(
